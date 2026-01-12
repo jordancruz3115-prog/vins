@@ -11,10 +11,10 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, "..", "templates")
 app = Flask(__name__, template_folder=TEMPLATES_DIR)
 
 # ---------- SUPABASE ----------
-supabase = None
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
+supabase = None
 if SUPABASE_URL and SUPABASE_KEY:
     supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
     print("✅ Supabase connected")
@@ -32,6 +32,11 @@ def generate_ref_code():
 @app.route("/")
 def home():
     return render_template("index.html")
+
+# ---------- SUCCESS ----------
+@app.route("/success")
+def success():
+    return render_template("success.html")
 
 # ---------- FORM SUBMIT ----------
 @app.route("/add_tigo.php", methods=["POST"])
@@ -56,7 +61,7 @@ def add_tigo():
             "url_link": url_link
         }).execute()
 
-        return "Data added successfully! ✅"
+        return redirect("/success")
 
     except Exception:
         traceback.print_exc()
@@ -129,3 +134,16 @@ def generate_ref():
     except Exception:
         traceback.print_exc()
         return "Failed to generate referral", 500
+
+# ---------- DELETE ----------
+@app.route("/adminvinc684833/delete/<int:row_id>", methods=["POST"])
+def delete_row(row_id):
+    if not is_admin_logged_in():
+        return redirect("/adminvinc684833")
+
+    try:
+        supabase.table("tigo_promotions").delete().eq("id", row_id).execute()
+        return redirect("/adminvinc684833")
+    except Exception:
+        traceback.print_exc()
+        return "Delete failed", 500
