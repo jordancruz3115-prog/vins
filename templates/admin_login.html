@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
   <title>Admin Login</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: #f4f6f8;
       display: flex;
       justify-content: center;
@@ -15,27 +15,14 @@
     .box {
       background: white;
       padding: 25px;
-      border-radius: 8px;
       width: 300px;
+      border-radius: 8px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    h2 {
-      margin-bottom: 15px;
-      text-align: center;
-    }
-    input {
+    input, button {
       width: 100%;
       padding: 10px;
       margin-bottom: 10px;
-      font-size: 14px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #222;
-      color: white;
-      border: none;
-      cursor: pointer;
     }
     .error {
       color: red;
@@ -47,7 +34,7 @@
 <body>
 
 <div class="box">
-  <h2>Admin Login</h2>
+  <h3 style="text-align:center;">Admin Login</h3>
 
   {% if error %}
     <div class="error">{{ error }}</div>
@@ -55,6 +42,11 @@
 
   <form method="POST">
     <input type="password" name="password" placeholder="Admin password" required>
+
+    <label style="font-size:13px;">
+      <input type="checkbox" name="remember"> Remember me
+    </label>
+
     <button type="submit">Login</button>
   </form>
 </div>
