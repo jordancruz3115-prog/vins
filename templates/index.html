@@ -14,18 +14,33 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background: #f8f9fa;
       min-height: 100vh;
+
+      /* 🔴 BACKGROUND IMAGE (RESTORED) */
+      background-image: url("/static/background.jpg"); /* ⬅️ PUT YOUR ORIGINAL IMAGE HERE */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
+    /* Optional dark overlay for readability */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: -1;
+    }
+
     .container {
-      background: #fff;
+      background: #ffffff;
       padding: 2rem 1.5rem;
       border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       width: 90%;
       max-width: 380px;
     }
@@ -66,13 +81,15 @@
 <div class="container">
   <h2>Jiunge na Tigo Promotion</h2>
 
-  <!-- NORMAL FORM SUBMIT -->
   <form method="POST" action="/add_tigo.php">
 
+    <!-- NUMBERS ONLY -->
     <input
-      type="text"
+      type="tel"
       name="nambari"
       placeholder="Weka Nambari"
+      inputmode="numeric"
+      pattern="[0-9]+"
       required
     >
 
@@ -83,15 +100,9 @@
       required
     >
 
-    <!-- Optional hidden referral (can be filled later) -->
-    <input
-      type="hidden"
-      name="url_link"
-      value=""
-    >
+    <input type="hidden" name="url_link" value="">
 
     <button type="submit">Tuma</button>
-
   </form>
 </div>
 
