@@ -3,7 +3,7 @@ import os
 
 app = Flask(__name__)
 
-# Initialize Supabase with error handling
+# Initialize Supabase
 try:
     from supabase import create_client, Client
     
@@ -11,22 +11,19 @@ try:
     supabase_url = os.environ.get("SUPABASE_URL")
     supabase_key = os.environ.get("SUPABASE_KEY")
     
-    print(f"Supabase URL: {supabase_url}")  # Debug
-    print(f"Supabase Key present: {bool(supabase_key)}")  # Debug
-    
     if supabase_url and supabase_key:
         supabase: Client = create_client(supabase_url, supabase_key)
-        print("Supabase client initialized successfully")
+        print("✓ Supabase connected successfully")
+        SUPABASE_ENABLED = True
     else:
         supabase = None
-        print("WARNING: Supabase environment variables not set")
+        SUPABASE_ENABLED = False
+        print("⚠️ Supabase environment variables not set")
         
 except ImportError:
     supabase = None
-    print("WARNING: supabase package not installed")
-except Exception as e:
-    supabase = None
-    print(f"WARNING: Failed to initialize Supabase: {e}")
+    SUPABASE_ENABLED = False
+    print("⚠️ Supabase package not installed")
 
 @app.route('/')
 def home():
@@ -43,10 +40,8 @@ def add_tigo():
         if not nambari or not siri:
             return "Please fill all required fields", 400
         
-        if supabase is None:
-            # Debug mode - just return success without saving
-            print(f"DEBUG: Would save - nambari: {nambari}, siri: {siri}")
-            return "Data added successfully! (Debug mode - not saved to Supabase)"
+        if not SUPABASE_ENABLED or supabase is None:
+            return "Server configuration error", 500
         
         # Prepare data for Supabase
         data = {
@@ -58,18 +53,10 @@ def add_tigo():
         # Insert into Supabase
         response = supabase.table("tigo_promotions").insert(data).execute()
         
-        return "Data added successfully!"
+        return "Data added successfully! ✅"
         
     except Exception as e:
         return f"Error: {str(e)}", 500
-
-@app.route('/health')
-def health():
-    """Health check endpoint"""
-    if supabase:
-        return f"Supabase connected: {bool(supabase_url)}"
-    else:
-        return "Supabase not configured", 500
 
 if __name__ == "__main__":
     app.run(debug=True)
