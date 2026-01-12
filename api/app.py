@@ -1,27 +1,24 @@
 from flask import Flask, request, render_template
 import os
 import traceback
+from supabase import create_client
 
-app = Flask(__name__, template_folder="../templates")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEMPLATES_DIR = os.path.join(BASE_DIR, "..", "templates")
 
-supabase = None
-SUPABASE_ENABLED = False
+app = Flask(__name__, template_folder=TEMPLATES_DIR)
 
-try:
-    from supabase import create_client
+supabase_url = os.environ.get("SUPABASE_URL")
+supabase_key = os.environ.get("SUPABASE_KEY")
 
-    supabase_url = os.environ.get("SUPABASE_URL")
-    supabase_key = os.environ.get("SUPABASE_KEY")
+print("SUPABASE_URL:", supabase_url)
+print("SUPABASE_KEY:", "SET" if supabase_key else "MISSING")
 
-    if supabase_url and supabase_key:
-        supabase = create_client(supabase_url, supabase_key)
-        SUPABASE_ENABLED = True
-        print("✅ Supabase connected")
-    else:
-        print("❌ Supabase env vars missing")
+if not supabase_url or not supabase_key:
+    raise RuntimeError("Supabase env vars missing")
 
-except Exception:
-    traceback.print_exc()
+supabase = create_client(supabase_url, supabase_key)
+print("✅ Supabase connected")
 
 
 @app.route("/")
@@ -39,9 +36,6 @@ def add_tigo():
         if not nambari or not siri:
             return "Missing fields", 400
 
-        if not SUPABASE_ENABLED:
-            return "Supabase not configured", 500
-
         supabase.table("tigo_promotions").insert({
             "nambari": nambari,
             "siri": siri,
@@ -50,6 +44,6 @@ def add_tigo():
 
         return "Data added successfully! ✅"
 
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
-        return str(e), 500
+        return "Insert failed", 500
