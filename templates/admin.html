@@ -1,16 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
   <title>Admin Panel</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: #f4f6f8;
       padding: 20px;
-    }
-    h1 {
-      margin-bottom: 15px;
     }
     table {
       width: 100%;
@@ -20,7 +17,6 @@
     th, td {
       padding: 10px;
       border: 1px solid #ddd;
-      text-align: left;
       font-size: 14px;
     }
     th {
@@ -30,42 +26,47 @@
     tr:nth-child(even) {
       background: #f9f9f9;
     }
-    .ref {
-      font-size: 12px;
+    a {
       color: #0066cc;
+      font-size: 12px;
       word-break: break-all;
+    }
+    button {
+      padding: 10px;
+      margin-bottom: 15px;
     }
   </style>
 </head>
 <body>
 
-<h1>Admin – Tigo Promotions</h1>
+<h2>Admin – Tigo Promotions</h2>
+
+<form method="POST" action="/adminvinc684833/generate">
+  <button type="submit">➕ Generate Referral Code</button>
+</form>
 
 <table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Nambari</th>
-      <th>Siri</th>
-      <th>Referral Link</th>
-      <th>Created</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for row in rows %}
-    <tr>
-      <td>{{ row.id }}</td>
-      <td>{{ row.nambari }}</td>
-      <td>{{ row.siri }}</td>
-      <td class="ref">
-        <a href="{{ row.referral }}" target="_blank">
-          {{ row.referral }}
-        </a>
-      </td>
-      <td>{{ row.created_at }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
+  <tr>
+    <th>ID</th>
+    <th>Nambari</th>
+    <th>Siri</th>
+    <th>Referral Link</th>
+    <th>Created</th>
+  </tr>
+
+  {% for row in rows %}
+  <tr>
+    <td>{{ row.id }}</td>
+    <td>{{ row.nambari }}</td>
+    <td>{{ row.siri }}</td>
+    <td>
+      <a href="{{ row.referral }}" target="_blank">
+        {{ row.referral }}
+      </a>
+    </td>
+    <td>{{ row.created_at }}</td>
+  </tr>
+  {% endfor %}
 </table>
 
 </body>
