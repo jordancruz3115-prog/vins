@@ -1,13 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin Login</title>
+  <meta charset="UTF-8">
+  <title>Admin Login</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      background: white;
+      padding: 25px;
+      width: 300px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .error {
+      color: red;
+      font-size: 13px;
+      text-align: center;
+    }
+  </style>
 </head>
-<body style="display:flex;justify-content:center;align-items:center;height:100vh;">
-<form method="POST">
-<input type="password" name="password" placeholder="Admin password" required>
-<button type="submit">Login</button>
-</form>
+<body>
+
+<div class="box">
+  <h3 style="text-align:center;">Admin Login</h3>
+
+  {% if error %}
+    <div class="error">{{ error }}</div>
+  {% endif %}
+
+  <form method="POST">
+    <input type="password" name="password" placeholder="Admin password" required>
+
+    <label style="font-size:13px;">
+      <input type="checkbox" name="remember"> Remember me
+    </label>
+
+    <button type="submit">Login</button>
+  </form>
+</div>
+
 </body>
 </html>
