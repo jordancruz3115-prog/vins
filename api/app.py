@@ -1,13 +1,11 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 import os
 import traceback
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../templates")
 
 supabase = None
 SUPABASE_ENABLED = False
-
-print("🚀 App starting...")
 
 try:
     from supabase import create_client
@@ -15,25 +13,20 @@ try:
     supabase_url = os.environ.get("SUPABASE_URL")
     supabase_key = os.environ.get("SUPABASE_KEY")
 
-    print("SUPABASE_URL:", bool(supabase_url))
-    print("SUPABASE_KEY:", bool(supabase_key))
-
     if supabase_url and supabase_key:
         supabase = create_client(supabase_url, supabase_key)
         SUPABASE_ENABLED = True
         print("✅ Supabase connected")
+    else:
+        print("❌ Supabase env vars missing")
+
 except Exception:
     traceback.print_exc()
 
 
 @app.route("/")
 def home():
-    try:
-        with open("index.html", "r", encoding="utf-8") as f:
-            return f.read()
-    except Exception:
-        traceback.print_exc()
-        return "index.html not found", 500
+    return render_template("index.html")
 
 
 @app.route("/add_tigo.php", methods=["POST"])
