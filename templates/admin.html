@@ -18,6 +18,7 @@
       padding: 10px;
       border: 1px solid #ddd;
       font-size: 14px;
+      text-align: center;
     }
     th {
       background: #222;
@@ -27,13 +28,19 @@
       background: #f9f9f9;
     }
     a {
-      color: #0066cc;
       font-size: 12px;
+      color: #0066cc;
       word-break: break-all;
     }
     button {
-      padding: 10px;
-      margin-bottom: 15px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+    .delete {
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
     }
   </style>
 </head>
@@ -41,7 +48,7 @@
 
 <h2>Admin – Tigo Promotions</h2>
 
-<form method="POST" action="/adminvinc684833/generate">
+<form method="POST" action="/adminvinc684833/generate" style="margin-bottom:15px;">
   <button type="submit">➕ Generate Referral Code</button>
 </form>
 
@@ -52,6 +59,7 @@
     <th>Siri</th>
     <th>Referral Link</th>
     <th>Created</th>
+    <th>Delete</th>
   </tr>
 
   {% for row in rows %}
@@ -65,6 +73,13 @@
       </a>
     </td>
     <td>{{ row.created_at }}</td>
+    <td>
+      <form method="POST"
+            action="/adminvinc684833/delete/{{ row.id }}"
+            onsubmit="return confirm('Delete this record?');">
+        <button class="delete" type="submit">Delete</button>
+      </form>
+    </td>
   </tr>
   {% endfor %}
 </table>
